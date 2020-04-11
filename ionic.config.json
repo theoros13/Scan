@@ -1,5 +1,7 @@
 {
   "name": "Scan",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
