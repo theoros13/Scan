@@ -4,6 +4,8 @@ import { CrudService } from './../service/crud.service';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { AlertController } from '@ionic/angular';
 import { ToastController } from '@ionic/angular';
+import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
+import * as firebase from 'firebase';
 
 @Component({
   selector: 'app-home',
@@ -17,14 +19,17 @@ export class HomePage {
   public textScanned: string = '';
   Work:any;
   User:any;
+  captureDataUrl: string;
 
   constructor(
     private qrScanner: QRScanner,
     private crudService: CrudService, 
     private diagnostic: Diagnostic,
     public alertController: AlertController,
-    public toastController: ToastController
-  ) { }
+    public toastController: ToastController,
+    private camera: Camera,
+  ) { 
+  }
 
   async ngOnInit() {
     const alert = await this.alertController.create({
@@ -90,8 +95,8 @@ export class HomePage {
           this.qrScanner.hide(); // hide camera preview
           scanSub.unsubscribe(); // stop scanning
           this.showCamera = false;
-
-          this.set_work();       
+          this.capture();
+          this.set_work();
 
         });
       } else if (status.denied) {
@@ -109,6 +114,16 @@ export class HomePage {
     this.qrScanner.destroy();
   }
 
+  async testToast(t:string) {
+    
+    const toast = await this.toastController.create({
+        message: t,
+        color : 'warnig',
+        duration: 3000
+      });
+    toast.present();
+  }
+
   async StartToast() {
     
     const toast = await this.toastController.create({
@@ -116,9 +131,6 @@ export class HomePage {
         color : 'success',
         duration: 2000
       });
-    
-
-    
     toast.present();
   }
 
@@ -129,10 +141,49 @@ export class HomePage {
         color : 'tertiary',
         duration: 2000
       });
-    
-
-    
     toast.present();
+  }
+
+
+  capture() {
+    const cameraOptions: CameraOptions = {
+      quality: 50,
+      cameraDirection: this.camera.Direction.FRONT,
+      destinationType: this.camera.DestinationType.DATA_URL,
+      encodingType: this.camera.EncodingType.JPEG,
+      mediaType: this.camera.MediaType.PICTURE,
+      sourceType: this.camera.PictureSourceType.CAMERA,
+      correctOrientation: true
+    };
+
+    this.camera.getPicture(cameraOptions)
+      .then((imageData) => {
+        // imageData is either a base64 encoded string or a file URI
+        // If it's base64:
+		
+        this.captureDataUrl = 'data:image/jpeg;base64,' + imageData;
+      }, (err) => {
+	  
+    });
+  } // End of capture camera
+
+
+  upload() {
+    let storageRef = firebase.storage().ref();
+    var imageRef;
+    var date = new Date();
+    var datetostring = date.getFullYear().toString() + '/' + date.getUTCMonth().toString() + '/' + date.getDate().toString();
+    if(this.User['id_work']){
+      imageRef = storageRef.child(this.User['nom'] + '-' + this.User['prenom'] + '/' + datetostring + '/start.jpg');
+    }else{
+      imageRef = storageRef.child(this.User['nom'] + '-' + this.User['prenom'] + '/' + datetostring + '/end.jpg');
+    }
+    imageRef.putString(this.captureDataUrl, firebase.storage.StringFormat.DATA_URL)
+      .then((snapshot)=> {
+        this.captureDataUrl = "";
+      }).catch((err)=>{
+        this.testToast(err);
+      });
   }
 
 }
