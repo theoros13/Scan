@@ -11,19 +11,14 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-
 <ion-content >
-  <ion-icon *ngIf="showCamera" class="frame" name="qr-scanner"></ion-icon>
   <h5 class="frame" *ngIf="!cameraAvailable">Il n'y a pas de camera sur cette appareille</h5>
-
   <div *ngIf="cameraAvailable">
-    
     <div *ngIf="!showCamera">
       <ion-button expand="block" (click)="scanCode()" >
         <ion-icon slot="start" name="qr-scanner"></ion-icon>
         Scanner un QR Code
       </ion-button>
-      <ion-button expand="block" (click)="upload()" *ngIf="captureDataUrl">Envoyer photo</ion-button>
     </div>
 
   </div>
