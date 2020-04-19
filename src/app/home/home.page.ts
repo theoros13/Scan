@@ -68,9 +68,6 @@ export class HomePage {
   }
   scanCode() {
     this.showCamera = true;
-    this.qrScanner.prepare()
-    .then((status: QRScannerStatus) => {
-      if (status.authorized) {
         const scanSub = this.qrScanner.scan().subscribe((text: string) => {
           this.textScanned = text;
           this.qrScanner.hide(); // hide camera preview
@@ -79,11 +76,6 @@ export class HomePage {
           this.capture();          
           this.set_work();
         });
-      } else if (status.denied) {
-        this.cameraAvailable = false;
-      }
-    })
-    .catch((e: any) => console.log('Error is', e));
   }
   closeCamera() {
     this.showCamera = false;

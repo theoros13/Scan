@@ -1,6 +1,6 @@
 #container {
   text-align: center;
-
+  background-color: transparent;
   position: absolute;
   left: 0;
   right: 0;
@@ -26,10 +26,6 @@
   text-decoration: none;
 }
 
-ion-content ion-toolbar {
+ion-toolbar {
   --background: translucent;
-}
-
-ion-content {
-  --ion-background-color: transparent;
 }
