@@ -20,6 +20,8 @@ export class HomePage {
   captureDataUrl: string;
   private texttoast:string ="";
 
+  scanqr:any;
+
   constructor(
     private qrScanner: QRScanner,
     private crudService: CrudService, 
@@ -28,6 +30,9 @@ export class HomePage {
     public toastController: ToastController,
     private camera: Camera,
   ) { 
+
+    this.qrScanner.show();
+    
   }
   async ngOnInit() {
     const alert = await this.alertController.create({
@@ -48,6 +53,8 @@ export class HomePage {
       await alert.present();
     });
   }
+
+
   set_work(){
     this.crudService.get_user_by_id(this.textScanned).subscribe(resp => {
       this.User = resp.data();
@@ -65,6 +72,10 @@ export class HomePage {
         this.texttoast = "Fin de service"
       }
      }); 
+
+
+
+
   }
   scanCode() {
     this.showCamera = true;
